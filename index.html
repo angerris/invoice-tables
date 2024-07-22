@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice Tables</title>
+    <style>
+      #mainPage {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginFormSection">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <div>
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
+    <div id="mainPage">
+      <button id="logoutButton">Logout</button>
+      <h1>Welcome to the Main Page</h1>
+      <div id="invoicesSection">
+        <h2>Invoices</h2>
+        <table id="invoicesTable" border="1">
+          <thead>
+            <tr>
+              <th>InvoiceName</th>
+              <th>Paid Date</th>
+              <th>Total Amount</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
