@@ -31,6 +31,15 @@ header {
   width: 300px;
   margin: 20px auto;
   display: none;
+  position: relative;
+  text-align: center;
+}
+#loginForm button {
+  margin-top: 10px;
+}
+#loginForm div {
+  margin: 10px 0;
+  width: 100%;
 }
 table {
   width: 100%;
