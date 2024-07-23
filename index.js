@@ -1,21 +1,38 @@
 document.addEventListener("DOMContentLoaded", function () {
+  //dom elements
   const loginForm = document.getElementById("loginForm");
   const loginFormSection = document.getElementById("loginFormSection");
   const mainPage = document.getElementById("mainPage");
   const logoutButton = document.getElementById("logoutButton");
-  const invoicesTable = document
+  const invoicesTableBody = document
     .getElementById("invoicesTable")
     .getElementsByTagName("tbody")[0];
+  const invoiceLinesTableBody = document
+    .getElementById("invoiceLinesTable")
+    .getElementsByTagName("tbody")[0];
+  const invoiceLinesSection = document.getElementById("invoiceLinesSection");
 
-  loginForm.addEventListener("submit", async function (event) {
+  let products = [];
+
+  //event listeners
+  loginForm.addEventListener("submit", handleLoginFormSubmit);
+  logoutButton.addEventListener("click", handleLogout);
+
+  //data fetch
+  async function fetchData(endpoint) {
+    const response = await fetch(
+      `https://bever-aca-assignment.azurewebsites.net/${endpoint}`
+    );
+    const data = await response.json();
+    return data.value;
+  }
+
+  //login form
+  async function handleLoginFormSubmit(event) {
     event.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-    const usersResponse = await fetch(
-      "https://bever-aca-assignment.azurewebsites.net/Users"
-    );
-    const usersData = await usersResponse.json();
-    const users = usersData.value;
+    const users = await fetchData("Users");
     const user = users.find(
       (user) => user.Name === username && user.Password === password
     );
@@ -23,33 +40,95 @@ document.addEventListener("DOMContentLoaded", function () {
       loginFormSection.style.display = "none";
       mainPage.style.display = "block";
       logoutButton.style.display = "block";
+      await fetchProducts();
       await fetchInvoices(user.UserId);
     } else {
       alert("Invalid username or password");
     }
-  });
+  }
 
-  logoutButton.addEventListener("click", function () {
+  //logout
+  function handleLogout() {
     mainPage.style.display = "none";
     loginFormSection.style.display = "block";
-    invoicesTable.innerHTML = "";
-  });
+    invoicesTableBody.innerHTML = "";
+    invoiceLinesTableBody.innerHTML = "";
+    invoiceLinesSection.style.display = "none";
+  }
 
+  //invoices fetch
   async function fetchInvoices(userId) {
-    const invoicesResponse = await fetch(
-      "https://bever-aca-assignment.azurewebsites.net/Invoices"
-    );
-    const invoicesData = await invoicesResponse.json();
-    const userInvoices = invoicesData.value.filter(
+    const invoices = await fetchData("Invoices");
+    const userInvoices = invoices.filter(
       (invoice) => invoice.UserId === userId
     );
+    invoicesTableBody.innerHTML = "";
+    for (const invoice of userInvoices) {
+      const row = invoicesTableBody.insertRow();
+      addRadioButtonCell(row, invoice.InvoiceId);
+      addTextCell(row, invoice.Name);
+      addTextCell(row, new Date(invoice.PaidDate).toLocaleDateString());
+      const invoiceTotalAmount = await calculateInvoiceTotalAmount(
+        invoice.InvoiceId
+      );
+      addTextCell(row, invoiceTotalAmount.toFixed(2));
+    }
+  }
 
-    userInvoices.forEach((invoice) => {
-      const row = invoicesTable.insertRow();
-      row.insertCell(0).innerText = invoice.Name;
-      row.insertCell(1).innerText = new Date(
-        invoice.PaidDate
-      ).toLocaleDateString();
+  //invoice lines fetch
+  async function fetchInvoiceLines(invoiceId) {
+    const invoiceLines = await fetchData("InvoiceLines");
+    const filteredLines = invoiceLines.filter(
+      (line) => line.InvoiceId === invoiceId
+    );
+    invoiceLinesTableBody.innerHTML = "";
+    filteredLines.forEach((line) => {
+      const row = invoiceLinesTableBody.insertRow();
+      const product = products.find(
+        (product) => product.ProductId === line.ProductId
+      );
+      const totalLineAmount = line.Quantity * product.Price;
+      addTextCell(row, product.Name);
+      addTextCell(row, product.Price.toFixed(2));
+      addTextCell(row, line.Quantity);
+      addTextCell(row, totalLineAmount.toFixed(2));
     });
+    invoiceLinesSection.style.display = "block";
+  }
+
+  //products fetch
+  async function fetchProducts() {
+    products = await fetchData("Products");
+  }
+
+  //total amount calculation
+  async function calculateInvoiceTotalAmount(invoiceId) {
+    const invoiceLines = await fetchData("InvoiceLines");
+    const filteredLines = invoiceLines.filter(
+      (line) => line.InvoiceId === invoiceId
+    );
+    return filteredLines.reduce((total, line) => {
+      const product = products.find(
+        (product) => product.ProductId === line.ProductId
+      );
+      return total + line.Quantity * product.Price;
+    }, 0);
+  }
+
+  //radio button
+  function addRadioButtonCell(row, invoiceId) {
+    const cell = row.insertCell();
+    const radioBtn = document.createElement("input");
+    radioBtn.type = "radio";
+    radioBtn.name = "selectedInvoice";
+    radioBtn.value = invoiceId;
+    radioBtn.addEventListener("change", () => fetchInvoiceLines(invoiceId));
+    cell.appendChild(radioBtn);
+  }
+
+  //insert corresponding text to a cell
+  function addTextCell(row, text) {
+    const cell = row.insertCell();
+    cell.innerText = text;
   }
 });
