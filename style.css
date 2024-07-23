@@ -1,0 +1,40 @@
+#mainPage,
+#invoiceLinesSection {
+  display: none;
+}
+header {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  height: 30px;
+}
+#logoutButton {
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+  display: none;
+}
+#loginFormSection {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
+  margin: 20px auto;
+  display: none;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th,
+td {
+  padding: 10px;
+  text-align: left;
+}
+th {
+  background-color: #f8f8f8;
+}

@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let products = [];
 
+  //show login form on page load
+  loginFormSection.style.display = "block";
+  mainPage.style.display = "none";
+
   //event listeners
   loginForm.addEventListener("submit", handleLoginFormSubmit);
   logoutButton.addEventListener("click", handleLogout);
@@ -54,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     invoicesTableBody.innerHTML = "";
     invoiceLinesTableBody.innerHTML = "";
     invoiceLinesSection.style.display = "none";
+    logoutButton.style.display = "none";
   }
 
   //invoices fetch

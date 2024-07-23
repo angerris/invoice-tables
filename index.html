@@ -3,15 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Invoice Tables</title>
-    <style>
-      #mainPage,
-      #invoiceLinesSection {
-        display: none;
-      }
-    </style>
   </head>
   <body>
+    <header>
+      <div id="headerMainPage">
+        <button id="logoutButton">Logout</button>
+      </div>
+    </header>
+
     <div id="loginFormSection">
       <h2>Login</h2>
       <form id="loginForm">
@@ -28,7 +29,6 @@
     </div>
 
     <div id="mainPage">
-      <button id="logoutButton">Logout</button>
       <h1>Invoices</h1>
       <table id="invoicesTable" border="1">
         <thead>
