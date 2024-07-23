@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginFormSection = document.getElementById("loginFormSection");
   const mainPage = document.getElementById("mainPage");
   const logoutButton = document.getElementById("logoutButton");
+  const usernameDisplay = document.getElementById("usernameDisplay");
   const invoicesTableBody = document
     .getElementById("invoicesTable")
     .getElementsByTagName("tbody")[0];
@@ -13,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const invoiceLinesSection = document.getElementById("invoiceLinesSection");
 
   let products = [];
+  let currentUser = null;
 
   //show login form on page load
   loginFormSection.style.display = "block";
@@ -41,9 +43,12 @@ document.addEventListener("DOMContentLoaded", function () {
       (user) => user.Name === username && user.Password === password
     );
     if (user) {
+      currentUser = user;
       loginFormSection.style.display = "none";
       mainPage.style.display = "block";
-      logoutButton.style.display = "block";
+      usernameDisplay.innerText = user.Name;
+      usernameDisplay.style.display = "inline";
+      logoutButton.style.display = "inline";
       await fetchProducts();
       await fetchInvoices(user.UserId);
     } else {
@@ -55,10 +60,12 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleLogout() {
     mainPage.style.display = "none";
     loginFormSection.style.display = "block";
+    usernameDisplay.style.display = "none";
+    logoutButton.style.display = "none";
     invoicesTableBody.innerHTML = "";
     invoiceLinesTableBody.innerHTML = "";
     invoiceLinesSection.style.display = "none";
-    logoutButton.style.display = "none";
+    currentUser = null;
   }
 
   //invoices fetch
